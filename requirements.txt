@@ -1,0 +1,11 @@
+# ---- pipeline + API (one environment, so `make data` and `make serve` agree) ----
+rasterio==1.4.3          # GDAL bindings: reprojection, COG writing, windowed reads
+rio-tiler==7.9.6         # XYZ tiles rendered straight off the COGs
+shapely==2.0.7           # hotspot geometry, STRtree spatial index
+pyproj==3.7.2            # coordinate transforms
+scipy==1.16.3            # connected components + zonal statistics
+numpy==2.3.5
+PyYAML==6.0.3
+
+fastapi==0.128.8
+uvicorn[standard]==0.39.0

@@ -1,0 +1,191 @@
+{
+  "ok": true,
+  "crs": {
+    "stored": "EPSG:32645",
+    "display": "EPSG:4326",
+    "bounds_wgs84": [
+      88.010695,
+      27.073148,
+      88.938677,
+      28.134655
+    ]
+  },
+  "rasters": [
+    {
+      "file": "dist_drainage.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "dist_roads.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "lithology.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "lsm.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "lsm_class.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "lulc.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "ndvi.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "ntl.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "open_buildings_area.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "open_buildings_count.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "population.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "rain_24h.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "rainfall.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "slope.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "soil.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "soil_moisture.tif",
+      "ok": true,
+      "issues": []
+    },
+    {
+      "file": "worldpop.tif",
+      "ok": true,
+      "issues": []
+    }
+  ],
+  "vectors": [
+    {
+      "file": "risk/active_alerts.geojson",
+      "vertices": 330,
+      "outside": 0,
+      "ok": true
+    },
+    {
+      "file": "society/assembly_raw.geojson",
+      "vertices": 75,
+      "outside": 0,
+      "ok": true
+    },
+    {
+      "file": "society/highways.geojson",
+      "vertices": 37613,
+      "outside": 0,
+      "ok": true
+    },
+    {
+      "file": "vector/hotspot_points.geojson",
+      "vertices": 485,
+      "outside": 0,
+      "ok": true
+    },
+    {
+      "file": "vector/hotspots.geojson",
+      "vertices": 86900,
+      "outside": 0,
+      "ok": true
+    },
+    {
+      "file": "vector/inventory.geojson",
+      "vertices": 691,
+      "outside": 0,
+      "ok": true
+    }
+  ],
+  "population": {
+    "ok": true,
+    "people": 634371.7,
+    "band": [
+      400000.0,
+      900000.0
+    ],
+    "census_2011": 610577,
+    "ratio_to_census_2011": 1.039,
+    "percentiles": {
+      "p50": 1.69,
+      "p90": 7.92,
+      "p99": 29.3,
+      "max": 2067.3
+    },
+    "legend_cap": 30,
+    "occupied_pixels": 170740,
+    "grid": {
+      "file": "population.tif",
+      "ok": true,
+      "issues": []
+    }
+  },
+  "forecast": {
+    "valid_pixels": 7743174,
+    "nodata_pixels": 3939021,
+    "zero_pixels": 203731,
+    "min_mm": 0.0,
+    "max_mm": 7.9,
+    "zeros_are_nodata": false,
+    "note": "A stored 0 on the rain raster is a dry cell inside the study mask. Nodata is the mask, not a missing API value. A null forecast hour is counted, then added as 0 so the 24 h total stays defined. The on-disk cache keeps summaries, so a 0 mm point cannot be recovered into a dropout after the fact.",
+    "requested_hours": 48,
+    "covers_72h": false,
+    "horizon_note": "Open-Meteo is asked for 48 h, so 72 h is not covered.",
+    "cache": {
+      "present": true,
+      "fetched_at": "2026-09-26T19:16:51.877044+00:00",
+      "points": 485,
+      "zero_24h_points": 145,
+      "null_hours_logged": 0,
+      "points_with_null_counter": 0
+    }
+  },
+  "proposals": [
+    {
+      "title": "Keep the forecast on its native 0.1\u00b0 grid",
+      "detail": "Open-Meteo is a 9 km model sampled every 0.1\u00b0. Painting it onto the 30 m analysis grid makes a regional forecast look like a village measurement. Store the coarse grid and let the tile reader resample it."
+    },
+    {
+      "title": "Request 72 hours and label a stale feed",
+      "detail": "The forecast asks for two days, so a 72-hour check has no array to read. Alerts already keep the last file when the API refuses; the radar clock should say the frame is saved rather than look live."
+    }
+  ]
+}

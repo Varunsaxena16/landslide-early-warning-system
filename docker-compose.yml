@@ -1,0 +1,18 @@
+# Local container run: docker compose up --build  →  http://localhost:8080
+services:
+  app:
+    build: .
+    image: sikkim-landslide
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      GDAL_CACHEMAX: "256"
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8080/healthz').status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped

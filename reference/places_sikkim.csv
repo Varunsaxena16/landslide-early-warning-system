@@ -1,0 +1,51 @@
+name,type,district,lat,lon,note
+Gangtok,Capital,Gangtok,27.3314,88.6138,State capital
+Namchi,District HQ,Namchi,27.1675,88.3639,
+Gyalshing (Geyzing),District HQ,Gyalshing,27.2833,88.2667,
+Mangan,District HQ,Mangan,27.5089,88.5222,
+Pakyong,District HQ,Pakyong,27.2333,88.5917,
+Soreng,District HQ,Soreng,27.1667,88.2333,
+Singtam,Town,Gangtok,27.2333,88.5000,Teesta valley
+Rangpo,Town,Pakyong,27.1772,88.5311,State entry point
+Jorethang,Town,Namchi,27.1078,88.3231,
+Melli,Town,Namchi,27.0864,88.4544,
+Rabongla (Ravangla),Town,Namchi,27.3081,88.3628,
+Pelling,Town,Gyalshing,27.3000,88.2333,
+Yuksom,Town,Gyalshing,27.3711,88.2231,
+Lachung,Village,Mangan,27.6897,88.7433,North Sikkim
+Lachen,Village,Mangan,27.7167,88.5500,North Sikkim
+Chungthang,Town,Mangan,27.6000,88.6417,Teesta-Lachen confluence
+Chaten,Village,Mangan,27.6644,88.6083,June 2025 landslide - detection model validation site
+Dikchu,Village,Mangan,27.4167,88.5167,
+Majitar,Town,Pakyong,27.1500,88.5000,
+Rhenock,Town,Pakyong,27.1667,88.6833,
+Rongli,Town,Pakyong,27.1833,88.7000,
+Rorathang,Village,Pakyong,27.1667,88.6167,
+Ranipool,Town,Gangtok,27.2833,88.5833,
+Tadong,Town,Gangtok,27.3167,88.6000,
+Sichey,Locality,Gangtok,27.3250,88.6000,
+Namthang,Village,Namchi,27.1833,88.4000,
+Temi,Village,Namchi,27.2500,88.4167,Tea garden
+Legship,Town,Gyalshing,27.2833,88.2500,
+Dentam,Village,Gyalshing,27.2833,88.1500,
+Hee Bermiok,Village,Soreng,27.2333,88.1833,
+Kaluk,Village,Soreng,27.2667,88.1833,
+Nayabazar,Town,Namchi,27.1167,88.2667,
+Ravongla Bazar,Locality,Namchi,27.3083,88.3639,
+Zuluk,Village,Pakyong,27.2500,88.7833,Old Silk Route
+Nathula,Pass,Gangtok,27.3867,88.8306,India-China border
+Tsomgo (Changu) Lake,Lake,Gangtok,27.3750,88.7620,
+Gurudongmar Lake,Lake,Mangan,28.0261,88.7100,
+Yumthang,Valley,Mangan,27.8167,88.7000,
+Thangu,Village,Mangan,27.8500,88.5500,
+Phodong,Village,Mangan,27.4167,88.5833,
+Kabi,Village,Mangan,27.4000,88.5833,
+Sang,Village,Pakyong,27.2500,88.6167,
+Assam Lingzey,Village,Pakyong,27.2167,88.6333,
+Makha,Village,Pakyong,27.2000,88.6500,
+Sombaria,Village,Soreng,27.2167,88.1667,
+Chakung,Village,Soreng,27.1833,88.2167,
+Reshi,Village,Soreng,27.2000,88.2333,
+Tashiding,Village,Gyalshing,27.3000,88.2833,
+Khecheopalri,Lake,Gyalshing,27.3500,88.1833,
+Sombari,Village,Namchi,27.1500,88.3500,

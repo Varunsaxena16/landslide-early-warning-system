@@ -1,0 +1,4 @@
+-r requirements.txt
+pytest==9.0.1
+httpx==0.28.1            # FastAPI TestClient
+pillow==11.3.0           # decodes tile PNGs in the API tests

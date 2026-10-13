@@ -1,0 +1,103 @@
+{
+  "method": "natural_breaks",
+  "n_classes": 5,
+  "breaks": [
+    0.117502,
+    0.280616,
+    0.464883,
+    0.643408
+  ],
+  "breaks_all_methods": {
+    "natural_breaks": [
+      0.117502,
+      0.280616,
+      0.464883,
+      0.643408
+    ],
+    "quantile": [
+      0.0341,
+      0.0786,
+      0.1842,
+      0.4802
+    ],
+    "equal_interval": [
+      0.17796,
+      0.35552,
+      0.53308,
+      0.71064
+    ]
+  },
+  "index_min": 0.0004,
+  "index_max": 0.8882,
+  "classified_px": 7743174,
+  "distribution": [
+    {
+      "class": 1,
+      "label": "Very Low",
+      "pixels": 3983618,
+      "area_km2": 3585.26,
+      "share_pct": 51.45,
+      "index_range": [
+        0.0004,
+        0.1175
+      ]
+    },
+    {
+      "class": 2,
+      "label": "Low",
+      "pixels": 1231729,
+      "area_km2": 1108.56,
+      "share_pct": 15.91,
+      "index_range": [
+        0.1175,
+        0.2806
+      ]
+    },
+    {
+      "class": 3,
+      "label": "Moderate",
+      "pixels": 900045,
+      "area_km2": 810.04,
+      "share_pct": 11.62,
+      "index_range": [
+        0.2806,
+        0.4649
+      ]
+    },
+    {
+      "class": 4,
+      "label": "High",
+      "pixels": 817705,
+      "area_km2": 735.93,
+      "share_pct": 10.56,
+      "index_range": [
+        0.4649,
+        0.6434
+      ]
+    },
+    {
+      "class": 5,
+      "label": "Very High",
+      "pixels": 810077,
+      "area_km2": 729.07,
+      "share_pct": 10.46,
+      "index_range": [
+        0.6434,
+        0.8882
+      ]
+    }
+  ],
+  "hotspots": {
+    "class": 5,
+    "min_pixels": 12,
+    "min_area_ha": 1.08,
+    "simplify_m": 45.0,
+    "count": 485,
+    "labelled_patches": 918,
+    "dropped_zero_exposure": 433,
+    "total_area_km2": 720.29,
+    "largest_area_km2": 633.339,
+    "median_area_ha": 3.15,
+    "exposure_formula": "exposure = 0.5*log1p(worldpop_people)/log1p(max) + 0.5*log1p(open_buildings_m2)/log1p(max); risk_score = mean_susceptibility_index * exposure_score; patches with no WorldPop population and no Open Buildings footprint are dropped"
+  }
+}

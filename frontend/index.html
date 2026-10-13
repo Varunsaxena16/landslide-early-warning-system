@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIHGIS NSUT</title>
+<meta name="description" content="Interactive GIS dashboard for landslide susceptibility mapping and hotspot identification in Sikkim, India.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>⛰️</text></svg>">
+<link rel="preload" as="font" type="font/woff2" href="fonts/web/CormorantGaramond.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/web/OpenSans.woff2" crossorigin>
+<link rel="stylesheet" href="vendor/maplibre-gl.css">
+<link rel="stylesheet" href="css/app.css?v=glass3">
+</head>
+<body>
+
+<div id="boot" class="boot"><div class="boot-inner">
+  <div class="boot-mark">Sikkim · India</div>
+  <div class="boot-title">Landslide Platform</div>
+  <div class="boot-sub" id="boot-msg">loading factor stack…</div>
+  <div class="boot-bar"><i></i></div>
+</div></div>
+
+<header class="topbar">
+  <div class="brand">
+    <b>Sikkim SIH-26</b>
+    <small id="brand-sub">who is on the slope — before it moves</small>
+  </div>
+
+  <nav class="panels" role="tablist" aria-label="Panels">
+    <button class="skew is-on" data-panel="risk" role="tab" aria-selected="true">Risk map</button>
+    <button class="skew" data-panel="warning" role="tab" aria-selected="false"
+            title="During the rain: alerts, road advice, nearest shelter">
+      <span class="dot ok"></span>Early warning
+    </button>
+  </nav>
+
+  <div class="search" role="search">
+    <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><path d="M10 4a6 6 0 104.2 10.3l4.3 4.2 1.4-1.4-4.2-4.3A6 6 0 0010 4zm0 2a4 4 0 110 8 4 4 0 010-8z"/></svg>
+    <input id="search-input" type="search" placeholder="Search a village, town or landslide"
+           autocomplete="off" spellcheck="false" aria-label="Search">
+    <kbd>/</kbd>
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+
+  <div class="topbar-actions">
+    <button id="btn-layers" class="ghost-btn is-on" aria-expanded="true" title="Base map, overlays and layers">
+      <svg viewBox="0 0 24 24"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="M3 13l9 5 9-5"/></svg>
+      Layers
+    </button>
+    <button id="btn-stats" class="ghost-btn" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+      Statistics
+    </button>
+    <button id="btn-about" class="ghost-btn" title="What this is, and what it is not">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>
+      About
+    </button>
+
+    <div class="theme-menu">
+      <button id="btn-theme" class="ghost-btn" aria-haspopup="true" aria-expanded="false"
+              title="Colour theme">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/>
+          <path d="M12 3a9 9 0 000 18"/></svg>
+        Theme
+      </button>
+      <div class="theme-drop" id="theme-drop" hidden role="menu"></div>
+    </div>
+  </div>
+</header>
+
+<main class="shell">
+
+  <div class="map-wrap">
+    <div id="map"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <button class="sidebar-reopen" id="sidebar-reopen" hidden aria-label="Open layers">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+      <span>Layers</span>
+    </button>
+
+    <!-- risk-class rail: the timeline analogue -->
+    <nav class="rail" id="rail" aria-label="Filter by risk category">
+      <div class="rail-inner" id="rail-inner"></div>
+    </nav>
+
+    <!-- risk numbers, plus a live vertical carousel of hazards nearby -->
+    <div class="readout-dock">
+      <div class="readout" id="readout"></div>
+      <div class="bulletin" id="bulletin" aria-roledescription="carousel"
+           aria-label="Live hazards for Sikkim and nearby hills">
+        <div class="bulletin-kicker"><i class="bulletin-pulse" aria-hidden="true"></i>Live bulletin</div>
+        <div class="bulletin-window">
+          <div class="bulletin-track"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="legend-stack" id="legend-stack"></div>
+
+    <div class="view-toggle">
+      <button class="skew is-on" id="view-map"><span>◍</span><span>Map</span></button>
+      <button class="skew" id="view-list"><span>❘❘❘</span><span>List</span></button>
+    </div>
+
+    <div class="zoomer">
+      <button id="zoom-in" aria-label="Zoom in">+</button>
+      <button id="zoom-out" aria-label="Zoom out">−</button>
+    </div>
+
+    <div class="map-badges"><div class="badge" id="badge-coords">—</div></div>
+
+    <div class="map-hint" id="map-hint">
+      <b>Click anywhere</b><span>to read every factor at that point</span>
+      <button class="hint-x" aria-label="Dismiss">×</button>
+      <i class="hint-timer" id="hint-timer"></i>
+    </div>
+  </div>
+
+  <!-- left drawer: every base map, overlay and layer control -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-head">
+      <h2>Layers</h2>
+      <button class="icon-btn" id="sidebar-close" aria-label="Close">×</button>
+    </div>
+    <div class="sidebar-scroll">
+
+      <section class="block">
+        <button class="focus-toggle" id="btn-focus" aria-pressed="false"
+                title="Mask everything outside the study area">
+          <span class="focus-text">
+            <b>Sikkim only</b><small>hide surrounding states &amp; borders</small>
+          </span>
+          <i class="switch"></i>
+        </button>
+      </section>
+
+      <section class="block">
+        <h3 class="block-title">Base map</h3>
+        <div class="basemap-grid" id="basemap-grid"></div>
+      </section>
+
+      <section class="block alert-panel" id="alert-panel">
+        <p class="alert-panel-note">Click a symbol for the reading.</p>
+        <div class="qgis-tree" role="group" aria-label="Early warning layers">
+          <label class="qgis-row">
+            <input type="checkbox" id="ly-alerts" checked>
+            <span class="ov-swatch radar" style="--c:#ca8a04"></span>
+            <span class="qgis-name">Active alerts</span>
+            <small id="ly-alerts-n"></small>
+          </label>
+          <label class="qgis-row">
+            <input type="checkbox" id="ly-roads" checked>
+            <span class="ov-swatch" style="--c:#ca8a04"></span>
+            <span class="qgis-name">Highway advisory</span>
+            <small id="ly-roads-n"></small>
+          </label>
+          <div class="qgis-key">
+            <i style="--c:#b91c1c"></i>avoid
+            <i style="--c:#ca8a04"></i>caution
+            <i style="--c:#3f7d6a"></i>open
+          </div>
+          <label class="qgis-row">
+            <input type="checkbox" id="ly-shelters" checked>
+            <span class="ov-swatch" style="--c:#3f7d6a"></span>
+            <span class="qgis-name">Safe assembly points</span>
+            <small id="ly-shelters-n"></small>
+          </label>
+        </div>
+        <div class="lg-title">Surfaces</div>
+        <p class="alert-panel-note">Drape a surface, then click the map for the reading.</p>
+        <div id="ew-rasters" class="layer-groups"></div>
+        <details class="qgis-fold" id="ew-table">
+          <summary>Attribute table</summary>
+          <select id="ew-table-layer" aria-label="Table layer">
+            <option value="alerts">Active alerts</option>
+            <option value="roads">Highways</option>
+            <option value="shelters">Assembly points</option>
+          </select>
+          <div id="ew-table-body" class="ew-table"></div>
+        </details>
+        <details class="qgis-fold">
+          <summary>Report a sign</summary>
+          <p class="alert-panel-note">Unverified. A report on a hotspot raises that alert one level for 48 hours.</p>
+          <form id="report-form" class="report-form">
+            <label>Sign
+              <select id="report-sign" required>
+                <option value="crack">Fresh crack / scarp</option>
+                <option value="tilt">Tilting tree or wall</option>
+                <option value="spring">New spring or wet ground</option>
+                <option value="rumble">Rumble or ground noise</option>
+                <option value="blocked_road">Road blocked</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+            <label>Note
+              <input id="report-note" type="text" maxlength="280" placeholder="What did you see?">
+            </label>
+            <button type="submit" class="mini-btn">Send report at map centre</button>
+          </form>
+        </details>
+      </section>
+
+      <section class="block">
+        <div class="block-head"><h3 class="block-title">Overlays</h3></div>
+        <div class="overlay-list">
+          <label class="ov">
+            <input type="checkbox" id="ov-hotspots" checked>
+            <span class="ov-swatch" style="--c:#e07020"></span>
+            <span class="ov-text"><b>Hotspot markers</b><small id="ov-hotspots-n">Very-High patches</small></span>
+          </label>
+          <label class="ov">
+            <input type="checkbox" id="ov-hotspot-outline">
+            <span class="ov-swatch ring" style="--c:#c45c28"></span>
+            <span class="ov-text"><b>Hotspot outlines</b><small>polygons in view</small></span>
+          </label>
+          <label class="ov">
+            <input type="checkbox" id="ov-inventory">
+            <span class="ov-swatch" style="--c:#e5eeed"></span>
+            <span class="ov-text"><b>Past landslides</b><small id="ov-inventory-n">GSI inventory</small></span>
+          </label>
+          <label class="ov">
+            <input type="checkbox" id="ov-places" checked>
+            <span class="ov-swatch tri" style="--c:#8ebcb6"></span>
+            <span class="ov-text"><b>Settlements</b><small>towns &amp; villages</small></span>
+          </label>
+        </div>
+        <div class="inv-filters" id="inv-filters" hidden></div>
+      </section>
+
+      <section class="block">
+        <div class="block-head">
+          <h3 class="block-title">Model output</h3>
+          <button class="link-btn" id="btn-clear-layers">clear</button>
+        </div>
+        <div id="layer-groups-model" class="layer-groups"></div>
+      </section>
+
+      <section class="block">
+        <button class="disclosure" id="factors-toggle" aria-expanded="false"
+                aria-controls="layer-groups-factors">
+          <svg class="disclosure-chev" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 6l6 6-6 6"/></svg>
+          <span class="disclosure-label">Conditioning factors</span>
+          <span class="disclosure-count" id="factors-count"></span>
+        </button>
+        <div id="layer-groups-factors" class="layer-groups is-collapsed"></div>
+      </section>
+
+    </div>
+  </aside>
+
+  <!-- list view -->
+  <section class="listview" id="listview" hidden>
+    <header class="list-head">
+      <h2>Hotspots</h2>
+      <p id="list-sub"></p>
+    </header>
+    <div class="list-scroll"><div class="list-track" id="list-track"></div></div>
+  </section>
+
+  <!-- point / hotspot / landslide inspector -->
+  <aside class="inspector" id="inspector" hidden>
+    <header class="insp-head">
+      <div>
+        <h2 id="insp-title">Point</h2>
+        <p id="insp-sub" class="insp-sub"></p>
+      </div>
+      <button class="icon-btn" id="insp-close" aria-label="Close">×</button>
+    </header>
+    <div class="insp-body" id="insp-body"></div>
+  </aside>
+
+</main>
+
+<section class="drawer" id="drawer" hidden aria-label="Statistics">
+  <header class="drawer-head">
+    <div class="drawer-tabs" role="tablist">
+      <button class="dt is-active" data-tab="summary" role="tab">Summary</button>
+      <button class="dt" data-tab="validation" role="tab">Validation</button>
+      <button class="dt" data-tab="exposure" role="tab">Exposure</button>
+      <button class="dt" data-tab="terrain" role="tab">Where the risk sits</button>
+      <button class="dt" data-tab="hotspots" role="tab">Hotspot table</button>
+    </div>
+    <button class="icon-btn" id="drawer-close" aria-label="Close">×</button>
+  </header>
+  <div class="drawer-body" id="drawer-body"></div>
+</section>
+
+<div class="toast" id="toast" hidden><div class="toast-card">
+  <span class="toast-title" id="toast-title"></span>
+  <span class="toast-msg" id="toast-msg"></span>
+</div></div>
+
+<div class="modal" id="about" hidden>
+  <div class="modal-card">
+    <header class="modal-head">
+      <h2>SIH Winner 2026</h2>
+      <button class="icon-btn" id="about-close" aria-label="Close">×</button>
+    </header>
+    <div class="modal-body" id="about-body"></div>
+  </div>
+</div>
+
+<script src="vendor/maplibre-gl.js"></script>
+<script type="module" src="js/app.js?v=priority"></script>
+</body>
+</html>

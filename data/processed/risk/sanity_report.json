@@ -1,0 +1,78 @@
+{
+  "gates": {
+    "worldpop_sum_band": {
+      "ok": true,
+      "people": 634371.3
+    },
+    "building_count_band": {
+      "ok": true,
+      "count": 329197
+    },
+    "worldpop_source_100m": {
+      "ok": false,
+      "source_pixel_m": 1000.0,
+      "fallback": "1 km UN-adjusted, dasymetric onto Open Buildings"
+    },
+    "published_zero_exposure": {
+      "ok": true,
+      "count": 0
+    },
+    "keep_rule": {
+      "ok": true,
+      "failing": 0
+    },
+    "risk_product": {
+      "ok": true,
+      "mismatches": 0
+    },
+    "dropped_empty_slopes": {
+      "ok": true,
+      "dropped": 433
+    },
+    "inventory_overlap": {
+      "ok": true,
+      "old_class5_pixels": 544,
+      "new_published_polygons": 512,
+      "total": 691,
+      "old_share": 0.7873,
+      "new_share": 0.741,
+      "delta_pp": -4.63
+    }
+  },
+  "notes": [
+    "WorldPop constrained 100 m is not the committed raster. The 1 km UN-adjusted grid is allocated onto building centroids."
+  ],
+  "worldpop_cog": {
+    "crs": "EPSG:32645",
+    "shape": [
+      3885,
+      3007
+    ],
+    "pixel_m": [
+      30.0,
+      30.0
+    ],
+    "product": "1 km, allocated onto Open Buildings footprints"
+  },
+  "buildings_cog": {
+    "crs": "EPSG:32645",
+    "count_sum": 329197
+  },
+  "hotspots": {
+    "published": 485,
+    "labelled": 918,
+    "dropped_zero_exposure": 433,
+    "class4_polygons": false,
+    "class4_note": "/api/hotspots is class 5 only; class 4 exists as raster (105 GSI points)."
+  },
+  "approach_compare": {
+    "shipped": "approach_1",
+    "approach_2_on_published_set_only": true,
+    "p95_pop": 323.3,
+    "p95_buildings": 206.8,
+    "p95_rain_mm_year": 18128.0,
+    "top50_overlap": 47,
+    "empty_wet_slope_would_score_under_approach_2": true,
+    "reason_not_shipped": "Rainfall is a time trigger. Folding the 30-year climatology into exposure scores empty wet slopes and cannot be checked against GSI."
+  }
+}

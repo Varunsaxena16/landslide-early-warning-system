@@ -1,0 +1,391 @@
+{
+  "raw_dir": "/Users/Vashishth/Downloads/SIH/SIHGIS/Risk_hotspots",
+  "rasters": [
+    {
+      "id": "lsm",
+      "file": "LSM_ensemble.tif",
+      "status": "ok",
+      "size_mb": 43.0,
+      "crs": "EPSG:32645",
+      "shape": [
+        2861,
+        3754
+      ],
+      "resolution_m": [
+        30.0,
+        30.0
+      ],
+      "dtype": "float32",
+      "declared_nodata": -3.4028234663852886e+38,
+      "nodata_used": -3.4028234663852886e+38,
+      "bounds_wgs84": [
+        88.01162,
+        27.10893,
+        88.89471,
+        28.13438
+      ],
+      "valid_fraction": 0.7208,
+      "valid_area_km2_est": 6961.1,
+      "stats": {
+        "min": 0.0006,
+        "max": 0.8876,
+        "mean": 0.2343
+      }
+    },
+    {
+      "id": "slope",
+      "file": "Layers/SLOPE_SIKKIM.tif",
+      "status": "ok",
+      "size_mb": 46.5,
+      "crs": "EPSG:32645",
+      "shape": [
+        2989,
+        3882
+      ],
+      "resolution_m": [
+        30.0,
+        30.0
+      ],
+      "dtype": "float32",
+      "declared_nodata": -9999.0,
+      "nodata_used": -9999.0,
+      "bounds_wgs84": [
+        88.01131,
+        27.07376,
+        88.93379,
+        28.13438
+      ],
+      "valid_fraction": 0.6798,
+      "valid_area_km2_est": 7096.8,
+      "stats": {
+        "min": 0.0062,
+        "max": 89.6063,
+        "mean": 28.1653
+      }
+    },
+    {
+      "id": "ndvi",
+      "file": "Layers/Mean_NDVI_Sikkim_2013_2019.tif",
+      "status": "ok",
+      "size_mb": 317.6,
+      "crs": "EPSG:32645",
+      "shape": [
+        8969,
+        11477
+      ],
+      "resolution_m": [
+        10.0,
+        10.0
+      ],
+      "dtype": "float32",
+      "declared_nodata": null,
+      "nodata_used": null,
+      "bounds_wgs84": [
+        88.0157,
+        27.07577,
+        88.93817,
+        28.12117
+      ],
+      "valid_fraction": 0.6953,
+      "valid_area_km2_est": 7152.3,
+      "stats": {
+        "min": -0.6857,
+        "max": 0.9045,
+        "mean": 0.36
+      }
+    },
+    {
+      "id": "dist_roads",
+      "file": "Layers/dis_to_Major_roads.tif",
+      "status": "ok",
+      "size_mb": 46.4,
+      "crs": "EPSG:32645",
+      "shape": [
+        2989,
+        3882
+      ],
+      "resolution_m": [
+        30.0,
+        30.0
+      ],
+      "dtype": "float32",
+      "declared_nodata": null,
+      "nodata_used": null,
+      "bounds_wgs84": [
+        88.01131,
+        27.07376,
+        88.93379,
+        28.13438
+      ],
+      "valid_fraction": 1.0,
+      "valid_area_km2_est": 10439.5,
+      "stats": {
+        "min": 0.0,
+        "max": 39812.543,
+        "mean": 4983.1234
+      }
+    },
+    {
+      "id": "dist_drainage",
+      "file": "Layers/final_dis_drainage.tif",
+      "status": "ok",
+      "size_mb": 418.1,
+      "crs": "EPSG:32645",
+      "shape": [
+        8969,
+        11649
+      ],
+      "resolution_m": [
+        10.0,
+        10.0
+      ],
+      "dtype": "float32",
+      "declared_nodata": -1000000000.0,
+      "nodata_used": -1000000000.0,
+      "bounds_wgs84": [
+        88.01104,
+        27.07358,
+        88.93373,
+        28.13447
+      ],
+      "valid_fraction": 0.6795,
+      "valid_area_km2_est": 7093.7,
+      "stats": {
+        "min": 0.0,
+        "max": 4548.4502,
+        "mean": 697.5757
+      }
+    },
+    {
+      "id": "rainfall",
+      "file": "Layers/mean_annual_rainfall_30yrs.tif",
+      "status": "ok",
+      "size_mb": 0.0,
+      "crs": "EPSG:4326",
+      "shape": [
+        21,
+        25
+      ],
+      "resolution_m": [
+        0.0449,
+        0.0449
+      ],
+      "dtype": "float64",
+      "declared_nodata": null,
+      "nodata_used": null,
+      "bounds_wgs84": [
+        87.98998,
+        27.03929,
+        88.93321,
+        28.16218
+      ],
+      "valid_fraction": 0.7124,
+      "valid_area_km2_est": 0.0,
+      "stats": {
+        "min": 625.4068,
+        "max": 2151.1917,
+        "mean": 1278.9217
+      }
+    },
+    {
+      "id": "ntl",
+      "file": "Layers/ntl_sikkim_30m.tif",
+      "status": "ok",
+      "size_mb": 5.6,
+      "crs": "EPSG:32645",
+      "shape": [
+        2991,
+        3884
+      ],
+      "resolution_m": [
+        30.0,
+        30.0
+      ],
+      "dtype": "float32",
+      "declared_nodata": null,
+      "nodata_used": -9999.0,
+      "bounds_wgs84": [
+        88.01074,
+        27.0734,
+        88.93383,
+        28.13457
+      ],
+      "valid_fraction": 0.6798,
+      "valid_area_km2_est": 7103.7,
+      "stats": {
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.0246
+      }
+    },
+    {
+      "id": "lulc",
+      "file": "Layers/lulc_cat_f.tif",
+      "status": "ok",
+      "size_mb": 0.8,
+      "crs": "EPSG:32645",
+      "shape": [
+        2991,
+        3884
+      ],
+      "resolution_m": [
+        30.0,
+        30.0
+      ],
+      "dtype": "uint8",
+      "declared_nodata": null,
+      "nodata_used": null,
+      "bounds_wgs84": [
+        88.01074,
+        27.0734,
+        88.93383,
+        28.13457
+      ],
+      "valid_fraction": 0.6798,
+      "valid_area_km2_est": 7103.7,
+      "stats": {
+        "min": 1.0,
+        "max": 9.0,
+        "mean": 4.7202
+      },
+      "distinct_values": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        9.0
+      ]
+    },
+    {
+      "id": "lithology",
+      "file": "Layers/lithology_cat_f.tif",
+      "status": "ok",
+      "size_mb": 0.4,
+      "crs": "EPSG:32645",
+      "shape": [
+        2991,
+        3884
+      ],
+      "resolution_m": [
+        30.0,
+        30.0
+      ],
+      "dtype": "int32",
+      "declared_nodata": null,
+      "nodata_used": null,
+      "bounds_wgs84": [
+        88.01074,
+        27.0734,
+        88.93383,
+        28.13457
+      ],
+      "valid_fraction": 0.6798,
+      "valid_area_km2_est": 7103.7,
+      "stats": {
+        "min": 1.0,
+        "max": 7.0,
+        "mean": 1.2367
+      },
+      "distinct_values": [
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0
+      ]
+    },
+    {
+      "id": "soil",
+      "file": "Layers/soil_type_cat_f.tif",
+      "status": "ok",
+      "size_mb": 0.6,
+      "crs": "EPSG:32645",
+      "shape": [
+        2991,
+        3884
+      ],
+      "resolution_m": [
+        30.0,
+        30.0
+      ],
+      "dtype": "int32",
+      "declared_nodata": null,
+      "nodata_used": null,
+      "bounds_wgs84": [
+        88.01074,
+        27.0734,
+        88.93383,
+        28.13457
+      ],
+      "valid_fraction": 1.0,
+      "valid_area_km2_est": 10450.0,
+      "stats": {
+        "min": 0.0,
+        "max": 4.0,
+        "mean": 2.0255
+      },
+      "distinct_values": [
+        0.0,
+        1.0,
+        2.0,
+        3.0,
+        4.0
+      ]
+    }
+  ],
+  "vectors": [
+    {
+      "id": "inventory",
+      "file": "Past_LS_points.kml",
+      "status": "ok",
+      "size_mb": 1.6,
+      "feature_count": 691,
+      "attributes": [
+        "abstract",
+        "activity",
+        "area_m2",
+        "citation",
+        "communication_affected",
+        "depth_m",
+        "distribution",
+        "district",
+        "failure_mechanism",
+        "geology",
+        "geomorphology",
+        "geoscientific_cause",
+        "gsi_objectid",
+        "height_m",
+        "hydrology",
+        "infrastructure_affected",
+        "initiation_year",
+        "landuse_affected",
+        "landuse_at_slide",
+        "length_m",
+        "livestock_affected",
+        "material_type",
+        "movement_rate",
+        "movement_type",
+        "people_affected",
+        "persons_dead",
+        "remarks",
+        "remediation",
+        "road_class",
+        "runout_m",
+        "slide_name",
+        "slide_no",
+        "state",
+        "structure",
+        "style",
+        "toposheet",
+        "trigger",
+        "volume_m3",
+        "width_m"
+      ]
+    }
+  ]
+}

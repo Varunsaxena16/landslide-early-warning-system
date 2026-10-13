@@ -1,0 +1,341 @@
+# ---------------------------------------------------------------------------
+# SIKKIM LANDSLIDE PLATFORM - LAYER REGISTRY
+# ---------------------------------------------------------------------------
+# Single source of truth. The pipeline, the API and the dashboard all read this
+# file. To add a factor raster: drop the .tif into the raw directory, add an
+# entry below, re-run `make data`. No code changes anywhere.
+#
+# Fields
+#   id            stable slug, used in URLs and the frontend
+#   title         human label in the UI
+#   group         sidebar grouping
+#   file          path relative to RAW_DIR
+#   kind          continuous | categorical
+#   nodata_in     value in the SOURCE file meaning "no data" (null = use the
+#                 file's own declared nodata)
+#   zero_is_nodata  treat 0 as no-data (several categorical rasters do this)
+#   resampling    nearest for categorical, bilinear/average for continuous
+#   store         how the harmonised COG is written:
+#                   real_value = stored * scale + offset
+#   display       colormap + stretch used by the tile server and the legend
+#   classes       for categorical layers: value -> {label, color}
+# ---------------------------------------------------------------------------
+
+project:
+  name: "Sikkim Landslide Susceptibility & Rapid Detection Platform"
+  short_name: "Sikkim Landslide Platform"
+  study_area: "Sikkim, India"
+  crs: "EPSG:32645"          # WGS 84 / UTM zone 45N - the CRS all factors ship in
+  resolution: 30             # metres; the analysis grid
+  # The study-area mask is taken from the LULC raster's valid footprint.
+  mask_from: lulc
+
+# ---------------------------------------------------------------------------
+# PANEL 1 - MODEL OUTPUT
+# ---------------------------------------------------------------------------
+layers:
+  - id: lsm
+    title: "Landslide Susceptibility (ensemble)"
+    group: model
+    file: "LSM_ensemble.tif"
+    kind: continuous
+    units: "susceptibility index"
+    nodata_in: null
+    resampling: bilinear
+    store: {dtype: uint16, scale: 0.0001, offset: 0, nodata: 65535}
+    display: {colormap: rdylgn_r, min: 0.0, max: 0.9, opacity: 0.80}
+    source: "Equal-weight ensemble of 5 ML models (CNN, Random Forest, tabular, chained), 0.2 each"
+    role: "Model output. Probability-like susceptibility index, 0 = lowest, ~0.89 = highest observed."
+    notes: >
+      Delivered as a continuous float surface, NOT pre-classified. The 5 risk
+      categories are derived in pipeline/s03_classify.py.
+
+  - id: lsm_class
+    title: "Risk category (5-class)"
+    group: model
+    derived: true                    # produced by the pipeline, not a raw input
+    kind: categorical
+    resampling: nearest
+    store: {dtype: uint8, scale: 1, offset: 0, nodata: 0}
+    display: {opacity: 0.80}
+    source: "Reclassification of the ensemble index - see data/processed/classification.json"
+    role: "Category 5 (Very High) is the hotspot layer the team presents."
+    classes:
+      1: {label: "Very Low",  color: "#1a9850"}
+      2: {label: "Low",       color: "#a6d96a"}
+      3: {label: "Moderate",  color: "#fee08b"}
+      4: {label: "High",      color: "#f46d43"}
+      5: {label: "Very High", color: "#a50026"}
+
+# ---------------------------------------------------------------------------
+# EARLY WARNING SURFACES
+# Written by tools/fetch_surfaces.py. Rain and soil are the Open-Meteo
+# forecast on a 0.1° grid; population is the existing WorldPop COG with
+# empty pixels left transparent. None of these enter the risk score.
+# ---------------------------------------------------------------------------
+  - id: rain_24h
+    title: "Rain next 24 h"
+    group: warning
+    derived: true
+    kind: continuous
+    units: "mm"
+    resampling: bilinear
+    store: {dtype: uint16, scale: 0.1, offset: 0, nodata: 65535}
+    display: {colormap: ylgnbu, min: 0, max: 10, opacity: 0.85}
+    source: "Open-Meteo forecast, hourly precipitation summed for 24 h. ECMWF IFS is 9 km; sampled at 0.1°."
+    role: "Forecast rain on the map. Colour runs 0–10 mm so a light day still shows; heavier rain stays at the top colour. A click gives the real millimetres. The warning line on a hotspot is 40 mm. This is not the 30-year mean."
+
+  - id: soil_moisture
+    title: "Soil moisture 0–7 cm"
+    group: warning
+    derived: true
+    kind: continuous
+    units: "m³/m³"
+    resampling: bilinear
+    store: {dtype: uint16, scale: 0.0001, offset: 0, nodata: 65535}
+    display: {colormap: ylorrd, min: 0.25, max: 0.55, opacity: 0.72}
+    source: "Open-Meteo soil_moisture_0_to_7cm, ECMWF IFS volumetric water in the top 7 cm."
+    role: "How wet the topsoil is right now. The watch line on an occupied slope is 0.40. This is not NASA SMAP."
+
+  - id: population
+    title: "Population"
+    group: warning
+    derived: true
+    kind: continuous
+    units: "people / 30 m"
+    resampling: nearest
+    store: {dtype: uint32, scale: 0.01, offset: 0, nodata: 4294967295}
+    # A linear YlOrRd bar left the common 2-person pixel on pale yellow.
+    # Log spacing plus a saturated orange-to-indigo ramp uses the whole bar.
+    display: {colormap: pop, min: 1, max: 30, opacity: 0.92, stretch: log}
+    source: "WorldPop 2020 UN-adjusted 1 km India, placed onto Google Open Buildings centroids. WorldPop and CIESIN (2018). State total 634,372. Census of India 2011 counted 610,577."
+    role: "People in one 30 m pixel. Empty ground stays clear, so it is not on the legend. The bar is 1 to 30 (the 99th percentile) on a log scale, so a typical 2–8 people sits in the orange and red. Denser pixels go purple. A click shows the real count."
+
+# ---------------------------------------------------------------------------
+# CONDITIONING FACTORS
+# ---------------------------------------------------------------------------
+  - id: slope
+    title: "Slope"
+    group: terrain
+    file: "Layers/SLOPE_SIKKIM.tif"
+    kind: continuous
+    units: "degrees"
+    nodata_in: -9999.0
+    resampling: bilinear
+    store: {dtype: uint16, scale: 0.01, offset: 0, nodata: 65535}
+    # Green -> yellow -> red across the full 0-90 deg, the convention on
+    # published slope maps, so this reads the same as the team's own figure.
+    display: {colormap: rdylgn_r, min: 0, max: 90, opacity: 0.85}
+    source: "DEM-derived (30 m)"
+    role: "Primary conditioning factor. Steeper slope -> higher shear stress."
+
+  - id: ndvi
+    title: "NDVI"
+    group: landcover
+    file: "Layers/Mean_NDVI_Sikkim_2013_2019.tif"
+    kind: continuous
+    units: "NDVI"
+    nodata_in: null
+    resampling: average          # 10 m source -> 30 m grid
+    mask_with_study_area: true   # source spills past the state outline
+    store: {dtype: int16, scale: 0.0001, offset: 0, nodata: -32768}
+    display: {colormap: rdylgn, min: -0.2, max: 0.8, opacity: 0.85}
+    source: "Landsat/Sentinel composite, 7-year mean 2013-2019, 10 m native"
+    role: "Vegetation cover proxy. Root cohesion stabilises slopes; bare ground does not."
+
+  - id: dist_roads
+    title: "Distance to major roads"
+    group: anthropogenic
+    file: "Layers/dis_to_Major_roads.tif"
+    kind: continuous
+    units: "m"
+    nodata_in: null
+    mask_with_study_area: true   # source has no nodata, it fills the whole rectangle
+    resampling: bilinear
+    store: {dtype: uint16, scale: 1, offset: 0, nodata: 65535}
+    display: {colormap: viridis_r, min: 0, max: 8000, opacity: 0.85}
+    source: "Euclidean distance to the major road network"
+    role: >
+      Proxy for slope cutting and hill excavation. Known artefact - Random Forest
+      over-fits this layer and paints "Very High" directly onto road pixels
+      (meeting 16:18:13). The ensemble damps it; it is not fully cured.
+
+  - id: dist_drainage
+    title: "Distance to drainage"
+    group: hydrology
+    file: "Layers/final_dis_drainage.tif"
+    kind: continuous
+    units: "m"
+    nodata_in: -1000000000.0
+    resampling: bilinear
+    store: {dtype: uint16, scale: 1, offset: 0, nodata: 65535}
+    display: {colormap: blues_r, min: 0, max: 2500, opacity: 0.85}
+    source: "Euclidean distance to the drainage network, 10 m native"
+    role: "Toe erosion and pore-pressure proxy. Channels undercut slopes."
+
+  - id: rainfall
+    title: "Rainfall"
+    group: climate
+    # Corrected input: a 30 m raster already in EPSG:32645 and already clipped to
+    # the state. It supersedes the 21 x 25 px, ~5 km geographic-CRS original,
+    # which had to be bilinearly blown up by ~170x and still left an edge fringe.
+    file: "Layers/mean_annual_rainfall_30yrs_CRS.tif"
+    kind: continuous
+    units: "mm/yr"
+    nodata_in: null
+    resampling: bilinear
+    edge_fill: true              # the source grid is offset ~4 m from ours, so
+                                 # bilinear leaves a one-pixel fringe at the coast
+    mask_with_study_area: true
+    store: {dtype: uint16, scale: 0.1, offset: 0, nodata: 65535}
+    display: {colormap: ylgnbu, min: 600, max: 2200, opacity: 0.85}
+    source: "30-year mean annual rainfall climatology, resampled to 30 m by the GIS side"
+    role: "The long-run trigger. Sets the baseline wetness a slope has adapted to;
+      the anomaly against it is what actually initiates failure."
+
+  - id: ntl
+    title: "Night-time lights"
+    group: anthropogenic
+    file: "Layers/ntl_sikkim_30m.tif"
+    kind: continuous
+    units: "normalised radiance"
+    nodata_in: -9999.0
+    resampling: average
+    mask_with_study_area: true   # source spills past the state outline
+    store: {dtype: uint16, scale: 0.0001, offset: 0, nodata: 65535}
+    display: {colormap: inferno, min: 0.0, max: 0.35, opacity: 0.85}
+    source: "VIIRS DNB, normalised 0-1, resampled to 30 m"
+    role: >
+      Where people actually live - the satellite sees which areas are lit after
+      dark (meeting 16:09:50). Came out as an important feature. Also used here
+      as the population-exposure proxy in the statistics panel.
+
+  - id: lulc
+    title: "Land use / land cover"
+    group: landcover
+    file: "Layers/lulc_cat_f.tif"
+    kind: categorical
+    nodata_in: null
+    zero_is_nodata: true
+    resampling: nearest
+    store: {dtype: uint8, scale: 1, offset: 0, nodata: 255}
+    display: {opacity: 0.85}
+    source: "Categorical LULC raster supplied with the factor stack"
+    role: >
+      Conditioning factor, and the key to unblocking InSAR - a LULC-change mask
+      is what separates real subsidence from new construction (meeting 16:16:12-30).
+    labels_inferred: true        # <-- Varun to confirm; see misc/docs/DATA.md
+    # Labels below were RECOVERED from each class's measured signature (mean NDVI,
+    # night-lights, slope, latitude) because no legend shipped with the raster.
+    # See misc/docs/DATA.md for the evidence table. Classes marked `inferred: true` are
+    # the ones the evidence does NOT settle - Varun to confirm from the source.
+    classes:
+      1: {label: "Built-up",                   color: "#cc2b2b"}
+      2: {label: "Wetland / valley vegetation", color: "#7fcdbb", inferred: true}
+      3: {label: "Forest",                     color: "#1a7d32"}
+      4: {label: "Alpine meadow / pasture",    color: "#c3d976", inferred: true}
+      5: {label: "Snow / glacier",             color: "#e8f1fa"}
+      6: {label: "Water body",                 color: "#2b6ecc"}
+      7: {label: "Barren / rocky",             color: "#a08b74"}
+      9: {label: "Sparse vegetation / scrub",  color: "#9dbf5a", inferred: true}
+
+  - id: lithology
+    title: "Lithology"
+    group: geology
+    file: "Layers/lithology_cat_f.tif"
+    kind: categorical
+    nodata_in: null
+    zero_is_nodata: true
+    resampling: nearest
+    store: {dtype: uint8, scale: 1, offset: 0, nodata: 255}
+    display: {opacity: 0.85}
+    source: "Categorical lithology raster supplied with the factor stack"
+    role: "Rock strength and weathering behaviour. Sets how much regolith a slope
+      can generate and how competent the bedrock beneath it is."
+    # Names and colours taken from the team's own published lithology map of
+    # Sikkim, then matched to raster values by area AND geography: Sedimentary is
+    # the north-east corner (lon mean 88.66), Unconsolidated the north-west edge
+    # (88.22), and Schist reaches further east (88.80) than Slate (88.57), which
+    # is what separates that pair.
+    labels_inferred: false
+    classes:
+      1: {label: "Metamorphic",    color: "#7a1216"}
+      2: {label: "Paragneiss",     color: "#ffd24a"}
+      3: {label: "Schist",         color: "#f92e0c"}
+      4: {label: "Slate",          color: "#8de83a"}
+      5: {label: "Sedimentary",    color: "#45be8c"}
+      6: {label: "Unconsolidated", color: "#2080a0"}
+      7: {label: "Igneous",        color: "#f8bfc6"}
+
+  - id: soil
+    title: "Soil type"
+    group: geology
+    file: "Layers/soil_type_cat_f.tif"
+    kind: categorical
+    nodata_in: null
+    zero_is_nodata: false        # 0 is a REAL class here — the map's own "No data"
+    mask_with_study_area: true   # source spills past the state outline
+    resampling: nearest
+    store: {dtype: uint8, scale: 1, offset: 0, nodata: 255}
+    display: {opacity: 0.85}
+    source: "Categorical soil raster supplied with the factor stack"
+    role: "Infiltration and cohesion. Governs how rainfall becomes pore pressure."
+    # Names and colours from the team's own soil map of Sikkim. Values matched by
+    # area and latitude: Sandy Clay Loam dominates the south (lat mean 27.44),
+    # Silty Clay Loam the north (27.81), and Loam is the far-southern strip
+    # (27.18) — which is also the 85%-High+ band.
+    labels_inferred: false
+    classes:
+      0: {label: "Ice/No data",     color: "#bfbfbf"}
+      1: {label: "Loam",            color: "#ffb3ba"}
+      2: {label: "Silt",            color: "#efc000"}
+      3: {label: "Sandy Clay Loam", color: "#8b1030"}
+      4: {label: "Silty Clay Loam", color: "#a18d7e"}
+
+
+# ---------------------------------------------------------------------------
+# VECTOR LAYERS
+# ---------------------------------------------------------------------------
+vectors:
+  - id: inventory
+    title: "Past landslides (GSI inventory)"
+    file: "Past_LS_points.kml"
+    kind: points
+    source: "Geological Survey of India - National Landslide Inventory (Bhukosh), Sikkim extract"
+    role: >
+      691 mapped historical failures with attributes. Used here for two things:
+      an overlay on the map, and the independent validation of the ensemble
+      (what share of real landslides fall in the High / Very High categories).
+    color: "#111827"
+
+  - id: hotspots
+    title: "Hotspots (Very High)"
+    derived: true
+    kind: polygons
+    source: "Vectorised category 5 of the reclassified ensemble"
+    role: "The hotspot layer requested in the meeting (16:16:59)."
+    color: "#a50026"
+
+# ---------------------------------------------------------------------------
+# CLASSIFICATION - how the continuous index becomes the 5 categories
+# ---------------------------------------------------------------------------
+classification:
+  # natural_breaks (Jenks, the convention in the LSM literature) | quantile | equal_interval | manual
+  method: natural_breaks
+  n_classes: 5
+  manual_breaks: [0.10, 0.30, 0.50, 0.70]   # used only when method == manual
+  # Hotspot polygons: drop specks smaller than this before vectorising
+  hotspot_min_pixels: 12        # 12 x 900 m2 ~ 1.1 ha
+  hotspot_simplify_m: 45        # Douglas-Peucker tolerance for the GeoJSON
+
+# ---------------------------------------------------------------------------
+# EXPOSURE - what turns a Very-High patch into a hotspot worth ranking
+# ---------------------------------------------------------------------------
+# risk = susceptibility × exposure.
+# exposure is WorldPop population and Open Buildings footprint area, each a
+# log share of the busiest patch. A patch with neither is dropped: area and
+# road proximity describe a slope, they are not exposure.
+exposure:
+  population_weight: 0.5
+  building_weight: 0.5
+  drop_zero: true

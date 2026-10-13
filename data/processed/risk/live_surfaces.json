@@ -1,0 +1,65 @@
+{
+  "fetched_at": "2026-09-26T19:04:26.575301+00:00",
+  "timezone": "Asia/Kolkata",
+  "population_stats": {
+    "min": 0.01,
+    "max": 2067.31,
+    "mean": 3.7154,
+    "pixels": 170740
+  },
+  "forecast": {
+    "cells_lon": 11,
+    "cells_lat": 12,
+    "step_deg": 0.1,
+    "rain_24h": {
+      "min": 0.0,
+      "max": 7.8971,
+      "mean": 1.3997,
+      "pixels": 7743174
+    },
+    "soil_moisture": {
+      "min": 0.228,
+      "max": 0.423,
+      "mean": 0.3913,
+      "pixels": 7743174
+    }
+  },
+  "rainfall": {
+    "layer_id": "rain_24h",
+    "api": "https://api.open-meteo.com/v1/forecast",
+    "variable": "hourly precipitation, preceding-hour sum, totalled for the next 24 hours",
+    "units": "mm",
+    "model": "Same Open-Meteo forecast call as the hotspot alerts. Open-Meteo documents hourly precipitation and soil_moisture_0_to_7cm on the ECMWF IFS HRES forecast: 9 km, updated every 6 hours (https://open-meteo.com/en/docs/ecmwf-api).",
+    "grid": "Sampled at 0.1\u00b0, bilinear onto the 30 m analysis grid, clipped to the ensemble footprint.",
+    "not_used": [
+      {
+        "name": "CHIRPS v3",
+        "why": "Pentad rainfall. The preliminary file is released two days after a pentad ends, and the final file the following month. It is a monitoring climatology, not a forecast. The 30-year mean already in cog/rainfall.tif stays the static conditioning factor."
+      },
+      {
+        "name": "NASA GPM IMERG Early",
+        "why": "0.1\u00b0 half-hourly satellite rain, about 4 hours late, but the granules are on NASA GES DISC and need an Earthdata login. Not fetched."
+      }
+    ]
+  },
+  "soil_moisture": {
+    "layer_id": "soil_moisture",
+    "api": "https://api.open-meteo.com/v1/forecast",
+    "variable": "soil_moisture_0_to_7cm at the current hour",
+    "units": "m\u00b3/m\u00b3",
+    "model": "ECMWF IFS volumetric soil water in the top 7 cm, via Open-Meteo. The alert gate already accepts 0 to 0.7. The watch line used on occupied slopes is 0.40.",
+    "not_used": [
+      {
+        "name": "NASA SMAP",
+        "why": "SMAP L4 is a 9 km soil-moisture analysis, but it is behind Earthdata and is not fetched. This layer is the forecast the alerts already read, not a SMAP map."
+      }
+    ]
+  },
+  "population": {
+    "layer_id": "population",
+    "file": "cog/worldpop.tif",
+    "units": "people per 30 m pixel",
+    "model": "WorldPop 2020, UN-adjusted, unconstrained 1 km India grid, dasymetrically placed onto Google Open Buildings centroids. Pixels with nobody counted are left transparent so the drape shows where people are, not a flat wash. Census village tables are not in this extract.",
+    "citation": "WorldPop and CIESIN, Columbia University (2018). Global High Resolution Population Denominators Project. Bill and Melinda Gates Foundation (OPP1134076). https://www.worldpop.org"
+  }
+}

@@ -1,0 +1,14 @@
+# Render deployment configuration.
+# Render builds the Dockerfile and injects $PORT.
+services:
+  - type: web
+    name: sikkim-landslide
+    runtime: docker
+    plan: free            # 512 MB RAM; the app idles at ~90 MB
+    region: singapore     # closest Render region to India
+    healthCheckPath: /healthz
+    envVars:
+      # Trimmed from the Dockerfile default so the GDAL block cache cannot push
+      # a 512 MB free instance into an OOM restart under tile load.
+      - key: GDAL_CACHEMAX
+        value: "128"

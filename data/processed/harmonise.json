@@ -1,0 +1,237 @@
+{
+  "grid": {
+    "crs": "EPSG:32645",
+    "resolution": 30.0,
+    "width": 3007,
+    "height": 3885,
+    "transform": [
+      30.0,
+      0.0,
+      600206.0083,
+      0.0,
+      -30.0,
+      3112539.6842
+    ],
+    "bounds_utm": [
+      600206.008,
+      2995989.684,
+      690416.008,
+      3112539.684
+    ],
+    "bounds_wgs84": [
+      88.010695,
+      27.073148,
+      88.938677,
+      28.134655
+    ],
+    "center_wgs84": [
+      88.474686,
+      27.603901
+    ]
+  },
+  "study_area_km2": 7108.2,
+  "layers": {
+    "lsm": {
+      "path": "cog/lsm.tif",
+      "size_mb": 15.14,
+      "coverage_of_study_area": 0.9965,
+      "valid_px": 7870272,
+      "store": {
+        "dtype": "uint16",
+        "scale": 0.0001,
+        "offset": 0,
+        "nodata": 65535
+      },
+      "stats": {
+        "min": 0.00039517178083769977,
+        "max": 0.8881998062133789,
+        "mean": 0.23427724362435348,
+        "std": 0.24251409440527144,
+        "p2": 0.007936672549694776,
+        "p98": 0.7886230075359344
+      }
+    },
+    "slope": {
+      "path": "cog/slope.tif",
+      "size_mb": 17.16,
+      "coverage_of_study_area": 0.9988,
+      "valid_px": 7888735,
+      "store": {
+        "dtype": "uint16",
+        "scale": 0.01,
+        "offset": 0,
+        "nodata": 65535
+      },
+      "stats": {
+        "min": 0.0019224979914724827,
+        "max": 89.60625457763672,
+        "mean": 28.160486312578637,
+        "std": 13.199069985721177,
+        "p2": 2.7446815299987795,
+        "p98": 55.47504165649414
+      }
+    },
+    "ndvi": {
+      "path": "cog/ndvi.tif",
+      "size_mb": 16.48,
+      "coverage_of_study_area": 0.9917,
+      "valid_px": 7832552,
+      "store": {
+        "dtype": "int16",
+        "scale": 0.0001,
+        "offset": 0,
+        "nodata": -32768
+      },
+      "stats": {
+        "min": -0.6876879660952373,
+        "max": 0.9216680361623397,
+        "mean": 0.36046040713549254,
+        "std": 0.29542116537256113,
+        "p2": -0.07522695617562654,
+        "p98": 0.7878279179422513
+      }
+    },
+    "dist_roads": {
+      "path": "cog/dist_roads.tif",
+      "size_mb": 3.44,
+      "coverage_of_study_area": 1.0,
+      "valid_px": 7897976,
+      "store": {
+        "dtype": "uint16",
+        "scale": 1,
+        "offset": 0,
+        "nodata": 65535
+      },
+      "stats": {
+        "min": 0.0,
+        "max": 39871.12890625,
+        "mean": 7320.7329288392575,
+        "std": 8526.285426744278,
+        "p2": 30.0,
+        "p98": 31811.78515625
+      }
+    },
+    "dist_drainage": {
+      "path": "cog/dist_drainage.tif",
+      "size_mb": 5.67,
+      "coverage_of_study_area": 0.9988,
+      "valid_px": 7888807,
+      "store": {
+        "dtype": "uint16",
+        "scale": 1,
+        "offset": 0,
+        "nodata": 65535
+      },
+      "stats": {
+        "min": 5.9437892148889775,
+        "max": 4590.421750070093,
+        "mean": 697.5638970586746,
+        "std": 499.77816989914186,
+        "p2": 24.312309595823464,
+        "p98": 1882.7157248134915
+      }
+    },
+    "rainfall": {
+      "path": "cog/rainfall.tif",
+      "size_mb": 0.25,
+      "coverage_of_study_area": 1.0,
+      "valid_px": 7897990,
+      "store": {
+        "dtype": "uint16",
+        "scale": 0.1,
+        "offset": 0,
+        "nodata": 65535
+      },
+      "stats": {
+        "min": 625.4067930607348,
+        "max": 2151.191713540431,
+        "mean": 1270.2613966121733,
+        "std": 309.7417842362312,
+        "p2": 789.6069653834206,
+        "p98": 1841.7716008111174
+      }
+    },
+    "ntl": {
+      "path": "cog/ntl.tif",
+      "size_mb": 1.09,
+      "coverage_of_study_area": 1.0,
+      "valid_px": 7897990,
+      "store": {
+        "dtype": "uint16",
+        "scale": 0.0001,
+        "offset": 0,
+        "nodata": 65535
+      },
+      "stats": {
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.024625817225734547,
+        "std": 0.030554847230346696,
+        "p2": 0.012343420647084713,
+        "p98": 0.09359395503997803
+      }
+    },
+    "lulc": {
+      "path": "cog/lulc.tif",
+      "size_mb": 1.36,
+      "coverage_of_study_area": 1.0,
+      "valid_px": 7897990,
+      "store": {
+        "dtype": "uint8",
+        "scale": 1,
+        "offset": 0,
+        "nodata": 255
+      },
+      "class_area_km2": {
+        "1": 12.7,
+        "2": 3.4,
+        "3": 3434.53,
+        "4": 907.41,
+        "5": 817.03,
+        "6": 38.49,
+        "7": 882.62,
+        "9": 1012.01
+      }
+    },
+    "lithology": {
+      "path": "cog/lithology.tif",
+      "size_mb": 0.12,
+      "coverage_of_study_area": 1.0,
+      "valid_px": 7897990,
+      "store": {
+        "dtype": "uint8",
+        "scale": 1,
+        "offset": 0,
+        "nodata": 255
+      },
+      "class_area_km2": {
+        "1": 6185.82,
+        "2": 542.45,
+        "3": 117.56,
+        "4": 164.67,
+        "5": 79.24,
+        "6": 17.68,
+        "7": 0.78
+      }
+    },
+    "soil": {
+      "path": "cog/soil.tif",
+      "size_mb": 0.25,
+      "coverage_of_study_area": 1.0,
+      "valid_px": 7897990,
+      "store": {
+        "dtype": "uint8",
+        "scale": 1,
+        "offset": 0,
+        "nodata": 255
+      },
+      "class_area_km2": {
+        "0": 621.25,
+        "1": 176.8,
+        "2": 23.97,
+        "3": 4188.57,
+        "4": 2097.61
+      }
+    }
+  }
+}

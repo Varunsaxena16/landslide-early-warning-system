@@ -1,0 +1,20 @@
+{
+  "worldpop": {
+    "title": "WorldPop 2020 UN-adjusted, unconstrained, 1 km, allocated onto Open Buildings",
+    "url": "https://data.worldpop.org/GIS/Population/Global_2000_2020_1km_UNadj/2020/IND/ind_ppp_2020_1km_Aggregated_UNadj.tif",
+    "citation": "WorldPop (www.worldpop.org) and Center for International Earth Science Information Network (CIESIN), Columbia University (2018). Global High Resolution Population Denominators Project. Funded by The Bill and Melinda Gates Foundation (OPP1134076).",
+    "people_in_study_area": 634371.3,
+    "people_in_source_cells_touching_study_area": 705298.2,
+    "resolution": "1 km, allocated onto Open Buildings footprints"
+  },
+  "open_buildings": {
+    "title": "Google Open Buildings v3, centroids",
+    "url": "https://storage.googleapis.com/open-buildings-data/v3/points_s2_level_4_gzip/39f_buildings.csv.gz",
+    "s2_token": "39f",
+    "citation": "Sirko, W., et al. (2021). Continental-scale building detection from high resolution satellite imagery. https://sites.research.google/open-buildings/",
+    "rows_scanned": 87929504,
+    "buildings_in_study_area": 329197,
+    "footprint_m2": 19509391.7,
+    "confidence_min": 0.65
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "inventory_total": 691,
+  "share_in_old_class5_pixels": 0.7873,
+  "share_in_corrected_risk_hotspots": 0.741,
+  "corrected_hotspots_with_at_least_one_slide": 39,
+  "delta_pp": -4.63,
+  "gate": "pass"
+}
