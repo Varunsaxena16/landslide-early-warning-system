@@ -2,7 +2,7 @@
 # Render builds the Dockerfile and injects $PORT.
 services:
   - type: web
-    name: sikkim-landslide
+    name: sikkim-landslide-dashboard
     runtime: docker
     plan: free            # 512 MB RAM; the app idles at ~90 MB
     region: singapore     # closest Render region to India
