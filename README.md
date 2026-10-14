@@ -4,7 +4,7 @@
 
 *Pahiro* is Nepali for landslide. Pahiro.Watch is an interactive GIS dashboard built on a five-model susceptibility ensemble. It shows where Sikkim's slopes are predisposed to fail, who lives and travels beneath them, and which of those places are under heavy rain right now.
 
-**Live: https://sikkim-landslide-dashboard-9mf9.onrender.com/**. It runs on a free instance that sleeps when idle, so the first load can take up to a minute.
+**Live: https://pahiro-watch.onrender.com**. It runs on a free instance that sleeps when idle, so the first load can take up to a minute.
 
 ---
 
