@@ -62,7 +62,7 @@ def frames_from_catalog(doc: dict) -> dict:
 
 
 def _fetch(url: str = CATALOG_URL) -> dict:
-    req = Request(url, headers={"User-Agent": "SIHGIS-live-rain/1.0"})
+    req = Request(url, headers={"User-Agent": "PahiroWatch-live-rain/1.0"})
     with urlopen(req, timeout=25) as resp:
         return json.load(resp)
 

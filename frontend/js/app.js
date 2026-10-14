@@ -1150,15 +1150,19 @@ function showToast(title, msg, ms = 2600) {
 }
 
 function renderAbout() {
-  const TEAM = ['Varun', 'Aman', 'Kajal', 'Sameera', 'Vanshaj', 'Dheeraj'];
   $('#about-body').innerHTML = `
     <div class="credit-hero">
-      <div class="credit-title">SIH GI 2026</div>
+      <div class="credit-title">Pahiro.Watch</div>
     </div>
-    <div class="team">
-      ${TEAM.map((n, i) => `
-        <div class="team-member" style="animation-delay:${i * 70}ms">
-          <span class="team-dot"></span><span class="team-name">${esc(n)}</span>
-        </div>`).join('')}
-    </div>`;
+    <h3 style="margin-top:20px">What this is</h3>
+    <p><i>Pahiro</i> is Nepali for landslide. This dashboard maps where Sikkim's slopes are
+    predisposed to fail, and who lives and travels beneath them.</p>
+    <h3>Risk map</h3>
+    <p>A five-model susceptibility ensemble across 7,108 km² of Sikkim, eleven conditioning-factor
+    layers, and 485 Very-High hotspots ranked by the people and buildings they expose.</p>
+    <h3>Early warning</h3>
+    <p>Live rainfall over the risk surface, with alerts, road advice and the nearest shelter.</p>
+    <h3>What it is not</h3>
+    <p>The risk map is a static planning layer. It shows where slopes are prone to fail,
+    not that a slope is failing today.</p>`;
 }

@@ -90,7 +90,7 @@ def summarise_hourly(hourly: dict, now: datetime) -> dict:
 
 
 def default_get(url: str) -> tuple[int, object]:
-    req = Request(url, headers={"User-Agent": "SIHGIS-alerts/1.0"})
+    req = Request(url, headers={"User-Agent": "PahiroWatch-alerts/1.0"})
     try:
         with urlopen(req, timeout=40) as resp:
             return resp.status, json.load(resp)

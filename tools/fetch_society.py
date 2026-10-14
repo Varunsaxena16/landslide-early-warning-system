@@ -76,7 +76,7 @@ def _post(query: str) -> dict:
     body = urlencode({"data": query}).encode()
     last = None
     for url in ENDPOINTS:
-        req = Request(url, data=body, headers={"User-Agent": "SIHGIS/society-fetch"})
+        req = Request(url, data=body, headers={"User-Agent": "PahiroWatch/society-fetch"})
         try:
             with urlopen(req, timeout=200) as resp:
                 return json.loads(resp.read().decode())

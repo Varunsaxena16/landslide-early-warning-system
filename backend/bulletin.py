@@ -352,7 +352,7 @@ def build_bulletin(usgs: dict | None, gdacs: dict | None, news_xml: str | None,
 
 
 def _fetch(url: str) -> bytes:
-    req = Request(url, headers={"User-Agent": "SIHGIS-bulletin/1.0"})
+    req = Request(url, headers={"User-Agent": "PahiroWatch-bulletin/1.0"})
     with urlopen(req, timeout=20) as resp:
         return resp.read()
 

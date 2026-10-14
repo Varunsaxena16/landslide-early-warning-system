@@ -1,29 +1,21 @@
-# Sikkim Landslide Platform
+# Pahiro.Watch
 
-**Panel 1 — landslide susceptibility mapping, hotspot identification and exposure screening for Sikkim, India.**
+**Landslide susceptibility, hotspot exposure and rainfall-triggered early warning for Sikkim, India.**
 
-Smart India Hackathon · GIS / Remote Sensing track · problem statement **26001**, *Early Warning and Landslide Risk Monitoring System in NER* (MDoNER).
+*Pahiro* is Nepali for landslide. Pahiro.Watch is an interactive GIS dashboard built on a five-model susceptibility ensemble. It shows where Sikkim's slopes are predisposed to fail, who lives and travels beneath them, and which of those places are under heavy rain right now.
 
-An interactive GIS dashboard over the team's existing five-model susceptibility ensemble: every conditioning factor as a toggleable layer, click-to-inspect at any point, Very-High hotspots ranked by what they expose, and the model scored against the Geological Survey of India's landslide inventory.
-
-**Live: https://sikkim-landslide.onrender.com/** — the free instance sleeps when idle, so the first request may take up to a minute to wake.
+**Live: https://sikkim-landslide-dashboard-9mf9.onrender.com/**. It runs on a free instance that sleeps when idle, so the first load can take up to a minute.
 
 ---
 
-## What this is, and what it is not
+## Two views
 
-This matters more than any feature, and the team agreed it in the 27 August review (16:11:55, 16:12:02):
-
-> *"Kabhi bhi main early warning system to bata hi nahi paaya hoon — main real-time bata paaya hoon."*
-> *"Hamesha isko maine 'Rapid' bola hai — Rapid Satellite-Based Detection System."*
-
-| Panel | Question it answers | Status |
+| View | Question it answers | What it shows |
 |---|---|---|
-| **1 · Susceptibility** | Where are slopes predisposed to fail? | **Complete — this project** |
-| 2 · Rapid detection | Has a slope just failed, and where? | Model trained and validated (~80%, 1 June 2025 event); not yet wired into the dashboard |
-| 3 · Early warning | Is a slope about to fail? | **Not built.** Needs the InSAR deformation track, which is blocked — land-cover change over built-up areas reads as ground subsidence |
+| **Risk map** | Where are slopes predisposed to fail, and who is exposed? | Susceptibility surface, 5 risk classes, 11 conditioning-factor layers, 485 ranked hotspots, the GSI landslide inventory |
+| **Early warning** | Which exposed slopes are getting heavy rain now? | Live rainfall, rain- and soil-moisture alerts on hotspots, highway advisories, nearest safe assembly points, a regional hazard bulletin |
 
-Panel 1 is a **static planning map**. It carries no live rainfall, no soil moisture and no deformation signal, so it cannot say a slope is failing today. Present it as susceptibility and rapid detection; do not let "rapid detection" be read as "early warning".
+**What it is not.** The risk map is a static planning layer, so it shows where slopes are *prone* to fail, not that one is failing today. The early-warning view adds a time trigger (rainfall and soil moisture) on top of it. It does not measure ground movement, and its alert thresholds are rule-based, not calibrated against past failures.
 
 ---
 
@@ -35,89 +27,43 @@ Panel 1 is a **static planning map**. It carries no live rainfall, no soil moist
 | Very High ("hotspot") class | **729 km² · 10.5%** of the state |
 | High + Very High | 21.0% of the area holds **99.2%** of mapped landslides |
 | Validation lift | **4.72×** landslide density versus area alone |
-| Success-rate AUC | **0.948** |
 | Top 10% of area | captures **81.7%** of mapped landslides |
-| Hotspot patches | **485** published (918 labelled, **433** with nobody and no buildings dropped) |
-| People in High + Very High | **480,000 of 634,000** (76%) — WorldPop, placed on Open Buildings |
+| Success-rate AUC | **0.948** |
+| Hotspot patches | **485** published, out of 918 found (433 with no people or buildings dropped) |
+| People in High + Very High | **480,000 of 634,000** (76%), from WorldPop placed on Open Buildings |
 | Buildings in High + Very High | **80%** of detected footprints |
-| Built-up exposed | **9.7 km² of 12.7 km²** sits in High or Very High |
 | Road network exposed | **74%** of the mapped network |
 
-Scored against **691 Geological Survey of India** inventory points. This is a *success-rate* curve, not a prediction-rate curve — the inventory was almost certainly in the training data, so it measures fit, not out-of-sample skill. See [misc/docs/VALIDATION.md](misc/docs/VALIDATION.md).
-
----
-
-## Quick start
-
-```bash
-make install                       # venv + dependencies
-cp -r /path/to/Risk_hotspots .     # the raw delivery (not in git — see misc/docs/DATA.md)
-make data                          # ~60 s: 881 MB raw → 62 MB of COGs + vectors
-make serve                         # http://localhost:8000
-```
-
-Already have `data/processed/`? Then `make install && make serve` is enough — the raw rasters are only needed to rebuild.
-
-```bash
-make test                 # pipeline consistency + API contract
-docker compose up --build # container on :8080
-```
-
-## Deploying
-
-One container serves the API and the dashboard, so a deployment is one service and one URL.
-Full instructions in **[misc/docs/DEPLOY.md](misc/docs/DEPLOY.md)**.
-
-Currently deployed at **https://sikkim-landslide.onrender.com/** (dashboard),
-[`/api/docs`](https://sikkim-landslide.onrender.com/api/docs) for the API, and
-[`/healthz`](https://sikkim-landslide.onrender.com/healthz) for the health check.
-
-| Target | Command |
-|---|---|
-| Render (fastest public URL) | Deploy using [`render.yaml`](render.yaml) |
-| Google Cloud Run | `make deploy PROJECT=<gcp-project-id>` |
-| Anywhere else | plain `Dockerfile`; reads `$PORT`, health check on `/healthz` |
-
-The application can be checked locally with `make test`, and the container can be smoke-tested
-with `make docker-run`.
+These figures are scored against **691 Geological Survey of India** inventory points. It's a *success-rate* curve, not a prediction-rate curve: the inventory was very likely used in training, so it measures fit, not out-of-sample skill.
 
 ---
 
 ## What the dashboard does
 
-- **Layer control** — all 11 harmonised layers, grouped, each with an opacity slider, a generated legend and a note on what it is and why it is in the model.
-- **Click-to-inspect** — click anywhere and read every conditioning factor at that pixel plus the model's verdict, exactly as asked for in the meeting (16:35:01).
-- **Hotspots** — Very-High patches that contain WorldPop population or an Open Buildings footprint. Empty slopes are left off. Each patch carries people, building area, and how many past landslides it contains, and is ranked by risk = susceptibility × exposure.
-- **Past landslides** — the full GSI inventory, filterable by district, material, movement type, activity and the model's class at that site.
-- **Search** — villages, towns and named landslides; jumps there and inspects it.
-- **Statistics** — area breakdown, the validation curve, exposure figures, and cross-tabs showing *which terrain* the model calls dangerous.
+### Risk map
+- **Layer control.** All 11 harmonised layers, grouped, each with an opacity slider, a generated legend, and a note on what it is and why it's in the model.
+- **Click-to-inspect.** Click anywhere to read every conditioning factor at that pixel, plus the model's verdict.
+- **Hotspots.** Very-High patches that contain population or building footprints, ranked by risk = susceptibility × exposure. Empty slopes are left out.
+- **Past landslides.** The full GSI inventory, filterable by district, material, movement type, activity, and the model's class at that site.
+- **Search.** Villages, towns and named landslides; it jumps to the place and inspects it.
+- **Statistics.** Area breakdown, the validation curve, exposure figures, and cross-tabs showing which terrain the model calls dangerous.
 
-Everything the UI draws — layers, groups, legends, colours, labels — comes from [`config/layers.yml`](config/layers.yml). Adding a factor raster is a config entry and `make data`; no JavaScript changes.
+### Early warning
+- **Live rainfall.** Observed precipitation and a short nowcast from LibreWXR (NOAA RRQPE), animated over the risk surface.
+- **Hotspot alerts.** Hourly rain and topsoil moisture from Open-Meteo, checked at every published hotspot:
 
-## The interface
+  | Level | Trigger |
+  |---|---|
+  | Watch | soil moisture ≥ 0.40 m³/m³ |
+  | Warning | ≥ 10 mm in 3 h or ≥ 40 mm in 24 h |
+  | Critical | ≥ 25 mm in 3 h or ≥ 80 mm in 24 h |
 
-The design language follows Statskog's [Statskogmillionen](https://www.statskog.no/statskogmillionen):
-a deep forest vignette, luminous points, Cormorant Garamond display over Open Sans, skewed
-parallelogram controls and hairline rules.
+- **Highway advisories.** NH10 and the North Sikkim Highway are cut into 1 km sections and scored against risk polygons and past slides.
+- **Safe assembly points.** Schools, grounds and halls from OpenStreetMap that sit more than 100 m from both risk polygons and recorded landslides. A click returns the nearest ones.
+- **Hazard bulletin.** M4+ earthquakes within 420 km of Gangtok (USGS), GDACS flood and quake alerts, and regional news headlines.
+- **Community reports.** Unverified reports of warning signs, such as cracks or tilting trees, pinned to the map.
 
-- **Two base maps, Light and Terrain**, on a light theme by default — the presentation the project
-  review asked for. Neither style paints an opaque background, so the CSS vignette shows through the
-  canvas: if the tile CDN is slow or demo wifi is gone, the risk surface still draws over a coloured
-  ground rather than a blank rectangle.
-- **Luminous hotspots.** Each published Very-High patch is drawn as three stacked GPU circle
-  layers — bloom, halo, core — sized off its **risk score** (susceptibility × exposure), so
-  brightness encodes how much is at stake. A slow sine breathes the bloom.
-- **The category rail** on the left steps through the five risk classes the way Statskog steps
-  through award years, with the same receding-perspective fade. It filters the raster server-side
-  (`/api/tiles/lsm_class/...?classes=5`) and the points client-side. <kbd>↑</kbd>/<kbd>↓</kbd> work.
-- **Map / List.** The List view is a horizontally scrolling wall of hotspot cards; each card's glow
-  is sized by area on a log scale, since the top of the list is uniformly ~100 on exposure.
-- **Everything else from the previous build is retained** — all four overlays, all 11 layers
-  with opacity sliders and notes, click-to-inspect, the inventory filters, search and the five
-  statistics tabs. The layer controls moved into a drawer that opens by default on desktop.
-
-Fonts and MapLibre are vendored (~940 KB total); the only remote calls are the optional raster
-base maps.
+Everything the UI draws (layers, groups, legends, colours, labels) comes from [`config/layers.yml`](config/layers.yml). Adding a factor raster takes one config entry and `make data`, with no JavaScript changes.
 
 ---
 
@@ -129,24 +75,47 @@ raw GeoTIFFs                pipeline/                    data/processed/
  2 CRSs, 881 MB)        vectorise → validate           GeoJSON + stats.json
                                                               │
                                                               ▼
-                                              backend/  FastAPI + rio-tiler
-                                              ├── /api/tiles/{layer}/{z}/{x}/{y}.png
-                                              ├── /api/point?lon=&lat=
-                                              ├── /api/hotspots, /api/inventory
-                                              └── /api/stats
+                                   backend/  FastAPI + rio-tiler
+                                   ├── /api/tiles/{layer}/{z}/{x}/{y}.png
+                                   ├── /api/point, /api/search
+                                   ├── /api/hotspots, /api/inventory, /api/stats
+                                   └── /api/alerts, /api/live-rain, /api/bulletin,
+                                       /api/corridor, /api/shelters
                                                               │
                                                               ▼
-                                              frontend/  MapLibre GL (vendored)
+                                   frontend/  MapLibre GL (vendored, no build step)
 ```
 
-**Why tiles are rendered on demand** rather than pre-generated: rio-tiler reads the 512 px block it needs at the right overview level, so the repo stays small, every zoom is sharp, and re-running the pipeline is live immediately with no tile cache to invalidate.
+- **Tiles are rendered on demand.** rio-tiler reads only the block it needs at the right overview level, so the repo stays small, every zoom is sharp, and a re-run of the pipeline goes live with no tile cache to clear.
+- **One container.** The API and the dashboard are served by the same process, so a deployment is one image and one URL.
+- **No API keys.** Every live feed (Open-Meteo, LibreWXR, USGS, GDACS) is public. A failed refresh keeps the last good copy.
 
-**Why one container**: the API and the dashboard are served by the same process, so a deployment is one image and one Cloud Run service.
+**Stack:** Python, FastAPI, rasterio / GDAL, rio-tiler, Shapely, pyproj, SciPy, MapLibre GL JS, Docker, Render.
 
-See [misc/docs/ARCHITECTURE.md](misc/docs/ARCHITECTURE.md), and
-**[misc/docs/TECHNICAL_REPORT.md](misc/docs/TECHNICAL_REPORT.md)** for the full reference — every layer's
-value range and pixel encoding, the zonal statistics and cross-tabs, how each design decision was
-made and why, the bugs worth recording, and a costed plan for the early-warning gap.
+---
+
+## Run it locally
+
+```bash
+make install     # venv + dependencies
+make serve       # http://localhost:8000
+```
+
+`data/processed/` is committed, so nothing needs rebuilding. To run the container instead:
+
+```bash
+docker compose up --build   # http://localhost:8080
+```
+
+API docs are served at `/api/docs`.
+
+## Deploy
+
+| Target | How |
+|---|---|
+| Render | New → Blueprint, using [`render.yaml`](render.yaml) |
+| Google Cloud Run | `make deploy PROJECT=<gcp-project-id>` |
+| Anywhere else | Plain `Dockerfile`; reads `$PORT`, health check on `/healthz` |
 
 ---
 
@@ -155,44 +124,31 @@ made and why, the bugs worth recording, and a costed plan for the early-warning 
 | Path | What lives there |
 |---|---|
 | `config/layers.yml` | **The registry.** Single source of truth for the pipeline, the API and the UI |
-| `pipeline/` | `s01` inventory → `s02` harmonise → `s03` classify → `s04` GSI points → `s05` statistics |
-| `backend/` | FastAPI app: tiles, point queries, features, statistics, static hosting |
-| `frontend/` | MapLibre dashboard — no build step, vendored library and glyphs |
-| `data/processed/` | COGs, GeoJSON, `stats.json` — what makes this project run without rebuilding data |
-| `misc/` | Optional project notes, documentation, and tests; not needed to run the dashboard |
-| `reference/` | Sikkim settlement list used by search (approximate — see misc/docs/DATA.md) |
-| `tools/` | `build_borders.py` — regenerates the Natural Earth boundary vectors |
-| `Dockerfile`, `render.yaml`, `cloudbuild.yaml` | Deployment — see [misc/docs/DEPLOY.md](misc/docs/DEPLOY.md) |
+| `pipeline/` | `s01` inventory → `s02` harmonise → `s03` classify → `s04` GSI points → `s05` statistics, plus alerts, exposure and highway logic |
+| `backend/` | FastAPI app: tiles, point queries, hotspots, alerts, bulletin, static hosting |
+| `frontend/` | MapLibre dashboard, with vendored library and fonts |
+| `data/processed/` | COGs, GeoJSON and `stats.json`, enough to run without rebuilding |
+| `reference/` | Sikkim settlement list used by search (approximate) |
+| `tools/` | Fetchers for exposure, highways, shelters, alerts and boundary vectors |
+| `Dockerfile`, `render.yaml`, `cloudbuild.yaml` | Deployment |
 
 ---
 
 ## Known limitations
 
-These are stated plainly because a susceptibility map that hides them is worse than no map.
-
-1. **The ensemble does not cover ~139 km²** of southern and eastern Sikkim that is inside the study area. Those pixels return "no model value".
-2. **Random Forest over-fits distance-to-road**, painting Very High directly onto road pixels (meeting 16:18:13). The equal-weight ensemble damps this; it does not remove it. Some of the 74% road exposure figure is this artefact.
-3. **The GSI inventory is road- and settlement-biased.** Landslides get mapped where people are. The model has seen few examples from the unpopulated high north, so low risk there is weakly evidenced.
-4. **Three land-cover labels and all seven lithology unit names were not supplied** with the rasters. Labels marked `?` in the UI were recovered from each class's measured signature — see [misc/docs/DATA.md](misc/docs/DATA.md) for the evidence, and confirm them against the source.
-5. **The road vector was not supplied**, only a distance raster. Absolute road-length figures are estimates; the shares are sound.
-6. **No village boundaries.** People and buildings now come from WorldPop 2020 and Google Open Buildings. That is a headcount and a footprint, not a list of villages. Census village points would still close the "which village" question.
-7. **The five categories were derived here**, not delivered — the ensemble arrived as a continuous index. Breaks and the alternatives are in [misc/docs/VALIDATION.md](misc/docs/VALIDATION.md).
-
----
-
-## What the GIS side still needs to send
-
-Tracked from the meeting's action items:
-
-- [ ] The remaining conditioning factors — 17 were modelled, **9 arrived**. Missing: aspect, curvature, TWI, elevation, and others.
-- [ ] Lithology unit names and the LULC class legend.
-- [ ] The road / drainage **vectors**, not just the distance rasters.
-- [ ] The variable → data source → purpose table (already written, per 16:33:56).
-- [ ] The `.h5` model files, for panel 2.
-- [ ] Confirmation of why the ensemble's extent is clipped short of the state boundary.
+1. **The ensemble does not cover about 139 km²** of southern and eastern Sikkim inside the study area. Those pixels return "no model value".
+2. **Random Forest over-fits distance-to-road**, which paints Very High onto road pixels. The equal-weight ensemble damps this but doesn't remove it, so part of the 74% road-exposure figure is this artefact.
+3. **The GSI inventory is road- and settlement-biased.** Landslides get mapped where people are, so low risk in the unpopulated high north is weakly evidenced.
+4. **Some class labels are inferred.** Three land-cover labels and all seven lithology unit names were recovered from each class's measured signature and are marked `?` in the UI.
+5. **Road lengths are estimates.** Only a distance-to-road raster was available, not the road vector. Shares are sound; absolute lengths are approximate.
+6. **Exposure is a headcount, not a village list.** People and buildings come from WorldPop 2020 and Google Open Buildings.
+7. **The five risk classes were derived here** from a continuous susceptibility index.
+8. **Early-warning thresholds are not calibrated** against past rainfall-triggered failures in Sikkim, and the view doesn't measure ground deformation.
 
 ---
 
-## Licence and attribution
+## Credits and data
 
-Landslide inventory © Geological Survey of India (Bhukosh). Basemaps © Esri / OpenTopoMap / OpenStreetMap contributors. Rainfall climatology from CHIRPS. Built for the Smart India Hackathon internal round, deadline 3 September.
+Built as a team project by students at Netaji Subhas University of Technology (NSUT), Delhi.
+
+Landslide inventory © Geological Survey of India (Bhukosh). Population: WorldPop 2020. Buildings: Google Open Buildings. Highways and assembly points © OpenStreetMap contributors. Live rainfall: LibreWXR (CC-BY-4.0). Forecasts: Open-Meteo. Earthquakes: USGS. Alerts: GDACS. Rainfall climatology: CHIRPS. Basemaps © Esri / OpenTopoMap / OpenStreetMap contributors.
