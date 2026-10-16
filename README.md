@@ -149,7 +149,7 @@ API docs are served at `/api/docs`.
 
 ## Credits and data
 
-Leader: Varun Saxena
+Leader: Varun Saxena,
 Built as a team project by students at Netaji Subhas University of Technology (NSUT), Delhi.
 
 Landslide inventory © Geological Survey of India (Bhukosh). Population: WorldPop 2020. Buildings: Google Open Buildings. Highways and assembly points © OpenStreetMap contributors. Live rainfall: LibreWXR (CC-BY-4.0). Forecasts: Open-Meteo. Earthquakes: USGS. Alerts: GDACS. Rainfall climatology: CHIRPS. Basemaps © Esri / OpenTopoMap / OpenStreetMap contributors.
